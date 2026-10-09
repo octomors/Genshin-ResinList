@@ -5,11 +5,39 @@
   const ENKA_IMAGE_ROOT = "https://enka.network/ui";
   const CATALOG_KEY = "genshin-notes.catalog.v1";
   const NOTES_KEY = "genshin-notes.notes.v1";
+  const THEME_KEY = "genshin-notes.theme.v1";
   const state = { catalog: [], notes: loadNotes(), draggedId: null };
   const form = document.querySelector("#note-form");
   const input = document.querySelector("#note-input");
   const status = document.querySelector("#status");
   const notesElement = document.querySelector("#notes");
+  const settingsButton = document.querySelector("#settings-button");
+  const settingsDialog = document.querySelector("#settings-dialog");
+  const themeSelect = document.querySelector("#theme-select");
+  const infoButton = document.querySelector("#info-button");
+  const infoDialog = document.querySelector("#info-dialog");
+
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    themeSelect.value = theme;
+    localStorage.setItem(THEME_KEY, JSON.stringify(theme));
+  }
+  function loadTheme() {
+    try {
+      const stored = localStorage.getItem(THEME_KEY);
+      if (!stored) return "dark";
+      const theme = JSON.parse(stored);
+      return typeof theme === "string" ? theme : "dark";
+    } catch (error) {
+      const legacyTheme = localStorage.getItem(THEME_KEY);
+      if (legacyTheme) {
+        localStorage.setItem(THEME_KEY, JSON.stringify(legacyTheme));
+        return legacyTheme;
+      }
+      console.warn("Could not read the saved theme.", error);
+      return "dark";
+    }
+  }
 
   function setStatus(message, kind) {
     status.textContent = message;
@@ -92,7 +120,7 @@
   }
   function isTalentsWord(word) {
     const target = normalize(word);
-    return target === "talent" || target === "talents" || similarity(target, "talents") >= .58;
+    return target === "talent" || target === "talents" || target.startsWith("tal") || similarity(target, "talents") >= .58;
   }
   function sortDays(days) {
     const order = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -242,6 +270,7 @@
     input.focus();
   });
   async function init() {
+    applyTheme(loadTheme());
     const cached = readStorage(CATALOG_KEY, []);
     if (Array.isArray(cached) && cached.length) {
       state.catalog = cached.map(item => ({ ...item, image: migrateImageUrl(item.image) }));
@@ -260,5 +289,8 @@
     render();
   }
   render();
+  settingsButton.addEventListener("click", () => settingsDialog.showModal());
+  infoButton.addEventListener("click", () => infoDialog.showModal());
+  themeSelect.addEventListener("change", event => applyTheme(event.target.value));
   init();
 })();

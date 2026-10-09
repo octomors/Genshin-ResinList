@@ -9,10 +9,16 @@
 </head>
 <body>
   <main>
-    <h1>Genshin Resin List</h1>
-    <p class="subtitle">Keep upgrade priorities locally in your browser.</p>
+    <header class="page-header">
+      <div>
+        <h1>Genshin Resin List</h1>
+        <p class="subtitle">Keep upgrade priorities locally in your browser.</p>
+      </div>
+      <button class="icon-button" id="settings-button" type="button" aria-label="Open settings" title="Settings">⚙</button>
+    </header>
     <form class="composer" id="note-form">
       <input id="note-input" autocomplete="off" placeholder="e.g. Raiden level 90 talents" aria-label="New note" required>
+      <button class="icon-button info-button" id="info-button" type="button" aria-label="How to write notes" title="How to write notes">i</button>
       <button class="add-button" type="submit">Add note</button>
     </form>
     <div class="status" id="status" role="status" aria-live="polite">Loading characters and weapons…</div>
@@ -23,6 +29,34 @@
       <a href="https://gi.yatta.moe/" target="_blank" rel="noopener noreferrer">Project Amber (Yatta)</a>
     </footer>
   </main>
+  <dialog class="modal" id="settings-dialog">
+    <form method="dialog">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="close-button" value="close" aria-label="Close settings">×</button>
+      </div>
+      <label for="theme-select">Theme</label>
+      <select id="theme-select">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="pink">Pink</option>
+        <option value="ocean">Ocean</option>
+        <option value="forest">Forest</option>
+      </select>
+    </form>
+  </dialog>
+  <dialog class="modal guide-modal" id="info-dialog">
+    <form method="dialog">
+      <div class="modal-header">
+        <h2>How to write a note</h2>
+        <button class="close-button" value="close" aria-label="Close guide">×</button>
+      </div>
+      <p>The first word is matched to a character or weapon. Typos are corrected automatically.</p>
+      <p>For a character's talent materials, put <strong>talents</strong> or a short form such as <strong>tal</strong> after the name.</p>
+      <p>The rest of the input is treated as a description or additional information.</p>
+      <p>Examples: <code>Clori tal</code>, <code>Ayaka talent mora farm</code>, <code>skyharp</code>.</p>
+    </form>
+  </dialog>
   <script src="app.js"></script>
 </body>
 </html>
