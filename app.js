@@ -6,7 +6,9 @@
   const CATALOG_KEY = "genshin-notes.catalog.v1";
   const NOTES_KEY = "genshin-notes.notes.v1";
   const THEME_KEY = "genshin-notes.theme.v1";
-  const state = { catalog: [], notes: loadNotes(), draggedId: null };
+  const SERVER_KEY = "genshin-notes.server.v1";
+  const SERVER_OFFSETS = { europe: 1, america: -5, asia: 8 };
+  const state = { catalog: [], notes: loadNotes(), server: loadServer(), draggedId: null };
   const form = document.querySelector("#note-form");
   const input = document.querySelector("#note-input");
   const status = document.querySelector("#status");
@@ -14,6 +16,7 @@
   const settingsButton = document.querySelector("#settings-button");
   const settingsDialog = document.querySelector("#settings-dialog");
   const themeSelect = document.querySelector("#theme-select");
+  const serverSelect = document.querySelector("#server-select");
   const infoButton = document.querySelector("#info-button");
   const infoDialog = document.querySelector("#info-dialog");
 
@@ -37,6 +40,17 @@
       console.warn("Could not read the saved theme.", error);
       return "dark";
     }
+  }
+  function loadServer() {
+    const server = readStorage(SERVER_KEY, "europe");
+    return Object.prototype.hasOwnProperty.call(SERVER_OFFSETS, server) ? server : "europe";
+  }
+  function applyServer(server) {
+    const selectedServer = Object.prototype.hasOwnProperty.call(SERVER_OFFSETS, server) ? server : "europe";
+    state.server = selectedServer;
+    serverSelect.value = selectedServer;
+    writeStorage(SERVER_KEY, selectedServer);
+    render();
   }
 
   function setStatus(message, kind) {
@@ -127,7 +141,9 @@
     return [...days].sort((a, b) => order.indexOf(a) - order.indexOf(b));
   }
   function todayName() {
-    return ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
+    const now = new Date(Date.now() + SERVER_OFFSETS[state.server] * 60 * 60 * 1000);
+    if (now.getUTCHours() < 4) now.setUTCDate(now.getUTCDate() - 1);
+    return ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][now.getUTCDay()];
   }
   function daysLabel(days) {
     const labels = { monday: "Mon", tuesday: "Tue", wednesday: "Wed", thursday: "Thu", friday: "Fri", saturday: "Sat", sunday: "Sun" };
@@ -351,7 +367,7 @@
       const days = document.createElement("span");
       days.className = "note-days";
       days.textContent = note.availableDays?.length ? `Materials: ${daysLabel(note.availableDays)}` : "";
-      days.title = "Talent materials are available on these days";
+      days.title = "Materials are available on these days";
       const handle = document.createElement("span");
       handle.className = "drag-handle";
       handle.textContent = "⠿";
@@ -414,6 +430,8 @@
   });
   async function init() {
     applyTheme(loadTheme());
+    state.server = loadServer();
+    serverSelect.value = state.server;
     const cached = readStorage(CATALOG_KEY, []);
     if (Array.isArray(cached) && cached.length) {
       state.catalog = cached.map(item => ({ ...item, image: migrateImageUrl(item.image) }));
@@ -435,5 +453,7 @@
   settingsButton.addEventListener("click", () => settingsDialog.showModal());
   infoButton.addEventListener("click", () => infoDialog.showModal());
   themeSelect.addEventListener("change", event => applyTheme(event.target.value));
+  serverSelect.addEventListener("change", event => applyServer(event.target.value));
+  window.setInterval(render, 60 * 1000);
   init();
 })();
