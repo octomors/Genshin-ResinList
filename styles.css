@@ -1,0 +1,70 @@
+:root {
+  color-scheme: dark;
+  --bg: #11131a;
+  --panel: #1b1f2a;
+  --panel-2: #242a39;
+  --text: #f4f5f7;
+  --muted: #aeb6c7;
+  --accent: #ffc857;
+  --accent-2: #79c9ff;
+  --danger: #ff8e8e;
+  --line: #3a4255;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-width: 320px;
+  background: radial-gradient(circle at 50% -10%, #26314a 0, var(--bg) 45rem);
+  color: var(--text);
+  font: 16px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main { width: min(960px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0; }
+h1 { margin: 0 0 .35rem; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.04em; }
+.subtitle { color: var(--muted); margin: 0 0 2rem; }
+.composer, .status, .empty { background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 16px; }
+.composer { display: flex; gap: .75rem; padding: .75rem; box-shadow: 0 1rem 3rem #0004; }
+.composer input {
+  flex: 1; min-width: 0; border: 0; border-radius: 10px; background: var(--panel-2); color: var(--text);
+  font: inherit; padding: .85rem 1rem; outline: 2px solid transparent;
+}
+.composer input:focus { outline-color: var(--accent-2); }
+button { border: 0; border-radius: 10px; cursor: pointer; font: inherit; }
+.add-button { background: var(--accent); color: #211b0a; font-weight: 700; padding: 0 1.2rem; }
+button:focus-visible, [draggable="true"]:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+.status { margin: 1rem 0; padding: .8rem 1rem; color: var(--muted); }
+.status.error { color: var(--danger); }
+.status.ready { color: #b9e7c0; }
+.notes { display: grid; gap: .7rem; margin-top: 1.25rem; }
+.note {
+  display: grid; grid-template-columns: 2.7rem 3.5rem minmax(10rem, 19rem) 1fr auto 2.3rem; align-items: center; gap: .8rem;
+  min-height: 74px; padding: .55rem .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  transition: opacity .15s, transform .15s, border-color .15s;
+}
+.note.dragging { opacity: .45; transform: scale(.99); border-color: var(--accent-2); }
+.note.not-today { opacity: .52; }
+.complete { width: 2.2rem; height: 2.2rem; background: transparent; color: var(--muted); font-size: 1.55rem; }
+.complete:hover { color: var(--accent); }
+.avatar { width: 3.5rem; height: 3.5rem; object-fit: cover; border-radius: 10px; background: var(--panel-2); }
+.note-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 750; color: var(--accent-2); }
+.note-text { min-width: 0; overflow-wrap: anywhere; }
+.note-days { color: var(--accent); font-size: .9rem; white-space: nowrap; }
+.drag-handle { display: grid; place-items: center; width: 2rem; height: 2.5rem; color: var(--muted); cursor: grab; font-size: 1.4rem; user-select: none; }
+.drag-handle:active { cursor: grabbing; }
+.empty { padding: 2rem; text-align: center; color: var(--muted); }
+.hint { margin: 1rem 0 0; color: var(--muted); font-size: .9rem; }
+.attribution { margin-top: 2rem; color: var(--muted); font-size: .85rem; text-align: center; }
+.attribution a { color: var(--accent-2); }
+@media (max-width: 680px) {
+  main { padding: 2rem 0; }
+  .composer { flex-direction: column; }
+  .add-button { padding: .8rem; }
+  .note { grid-template-columns: 2.5rem 3rem 1fr auto 2rem; gap: .55rem; }
+  .avatar { width: 3rem; height: 3rem; }
+  .note-title { grid-column: 3; }
+  .note-text { grid-column: 3; grid-row: 2; }
+  .note-days { grid-column: 3 / span 2; grid-row: 3; }
+  .note { grid-template-rows: auto auto; }
+  .complete { grid-row: 1 / span 2; }
+  .avatar { grid-row: 1 / span 2; }
+  .drag-handle { grid-row: 1 / span 2; }
+}
