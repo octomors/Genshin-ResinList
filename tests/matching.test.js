@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bestMatch, isTalentsWord, sortDays } from "../matching.js";
+import { bestMatch, isTalentsWord, sortDays } from "../js/matching.js";
 
 const catalog = [
   { name: "Raiden Shogun", kind: "character" },
